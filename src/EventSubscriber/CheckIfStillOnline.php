@@ -33,7 +33,7 @@ final class CheckIfStillOnline implements EventSubscriberInterface
     public function verifyIfStalkedStillOnline(HourlyEvent $hourlyEvent): void
     {
         $onlineUsers = $this->lastNotifiedUserStatusRepository->findAllNotOfflineUsers();
-        dd($onlineUsers);
+
         if (!count($onlineUsers)) {
             return;
         }

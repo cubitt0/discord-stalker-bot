@@ -7,6 +7,7 @@ use App\Event\HourlyEvent;
 use App\Event\PresenceUpdateEvent;
 use Discord\Discord;
 use Discord\Exceptions\IntentException;
+use Discord\Parts\User\Activity;
 use Discord\Parts\WebSockets\PresenceUpdate;
 use Discord\WebSockets\Event;
 use Discord\WebSockets\Intents;
@@ -48,11 +49,11 @@ class DiscordBotCommand extends Command
         $discord->on('ready', function (Discord $discord) {
             echo "Bot is ready!", PHP_EOL;
 
-            $discord->application->commands->clear();
+            $discord->updatePresence(new Activity($discord, ['type' => Activity::TYPE_WATCHING, 'name' => 'świat zza krat']));
 
             $this->dispatcher->dispatch((new BotReadyEvent($discord)));
 
-            $discord->getLoop()->addPeriodicTimer(3600, function (TimerInterface $timer) use ($discord) {
+            $discord->getLoop()->addPeriodicTimer(10, function (TimerInterface $timer) use ($discord) {
                 $this->dispatcher->dispatch(new HourlyEvent($discord, $timer));
             });
 
