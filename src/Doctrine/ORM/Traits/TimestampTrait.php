@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Doctrine\ORM\Traits;
 
 use App\Entity\StalkSettings;
+use DateTime;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -46,5 +47,19 @@ trait TimestampTrait
     public function getUpdatedAt(): DateTimeInterface
     {
         return $this->updatedAt;
+    }
+
+    #[ORM\PrePersist]
+    public function setTimestampFields(): void
+    {
+        $this
+            ->setCreatedAt(new DateTime())
+            ->setUpdatedAt(new DateTime());
+    }
+
+    #[ORM\PreUpdate]
+    public function setUpdatedAtField(): void
+    {
+        $this->setUpdatedAt(new DateTime());
     }
 }

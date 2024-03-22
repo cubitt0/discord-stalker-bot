@@ -25,11 +25,6 @@ class StalkSettings implements TimestampInterface
     #[ORM\Column(length: 255)]
     private ?string $stalked = null;
 
-    public function __construct()
-    {
-        $this->createdAt = new \DateTime();
-    }
-
     public function getId(): ?int
     {
         return $this->id;

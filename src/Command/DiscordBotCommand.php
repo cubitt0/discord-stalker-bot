@@ -3,23 +3,19 @@
 namespace App\Command;
 
 use App\Event\BotReadyEvent;
+use App\Event\HourlyEvent;
 use App\Event\PresenceUpdateEvent;
-use Discord\Builders\MessageBuilder;
 use Discord\Discord;
 use Discord\Exceptions\IntentException;
-use Discord\Parts\Interactions\Command\Command as DiscordCommand;
-use Discord\Parts\Interactions\Command\Option;
-use Discord\Parts\Interactions\Interaction;
-use Discord\Parts\User\Activity;
 use Discord\Parts\WebSockets\PresenceUpdate;
+use Discord\WebSockets\Event;
 use Discord\WebSockets\Intents;
-use Doctrine\ORM\EntityManagerInterface;
 use Psr\EventDispatcher\EventDispatcherInterface;
+use React\EventLoop\TimerInterface;
 use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Discord\WebSockets\Event;
 use Symfony\Component\DependencyInjection\Attribute\Autowire;
 
 #[AsCommand(
@@ -51,8 +47,15 @@ class DiscordBotCommand extends Command
 
         $discord->on('ready', function (Discord $discord) {
             echo "Bot is ready!", PHP_EOL;
+
             $discord->application->commands->clear();
+
             $this->dispatcher->dispatch((new BotReadyEvent($discord)));
+
+            $discord->getLoop()->addPeriodicTimer(3600, function (TimerInterface $timer) use ($discord) {
+                $this->dispatcher->dispatch(new HourlyEvent($discord, $timer));
+            });
+
             $discord->on(Event::PRESENCE_UPDATE, function (PresenceUpdate $presence, Discord $discord) {
                 $this->dispatcher->dispatch(new PresenceUpdateEvent($presence, $discord));
             });
