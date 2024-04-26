@@ -38,7 +38,7 @@ final class CheckIfStillOnline implements EventSubscriberInterface
             return;
         }
 
-        $activeUsersId = array_map(function (LastNotifiedUserStatus $userStatus) {
+        $activeUsersId = array_map(static function (LastNotifiedUserStatus $userStatus) {
             return $userStatus->getUserid();
         }, $onlineUsers);
 
@@ -47,7 +47,7 @@ final class CheckIfStillOnline implements EventSubscriberInterface
         /** @var Guild $guild */
         foreach ($hourlyEvent->getDiscord()->guilds->getIterator() as $guild) {
             $members = $guild->members->filter(function (Member $member) use ($activeUsersId) {
-                return in_array($member->id, $activeUsersId) && $member->status === Activity::STATUS_INVISIBLE;
+                return in_array($member->id, $activeUsersId, true) && $member->status === Activity::STATUS_INVISIBLE;
             });
             /** @var Member $member */
             foreach ($members as $member) {

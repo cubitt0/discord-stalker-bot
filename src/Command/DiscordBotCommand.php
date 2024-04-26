@@ -53,7 +53,7 @@ class DiscordBotCommand extends Command
 
             $this->dispatcher->dispatch((new BotReadyEvent($discord)));
 
-            $discord->getLoop()->addPeriodicTimer(10, function (TimerInterface $timer) use ($discord) {
+            $discord->getLoop()->addPeriodicTimer(3600, function (TimerInterface $timer) use ($discord) {
                 $this->dispatcher->dispatch(new HourlyEvent($discord, $timer));
             });
 

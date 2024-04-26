@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\EventSubscriber;
 
 use App\Command\Discord\DiscordBotCommandInterface;
+use App\Command\Discord\PingCommand;
 use App\Command\Discord\StalkCommand;
 use App\Command\Discord\UnStalkCommand;
 use App\Event\BotReadyEvent;
@@ -65,7 +66,8 @@ final class CreateBotCommandsSubscriber implements EventSubscriberInterface
     {
         return [
             new StalkCommand($this->entityManager, $this->stalkSettingsRepository),
-            new UnStalkCommand($this->entityManager, $this->stalkSettingsRepository)
+            new UnStalkCommand($this->entityManager, $this->stalkSettingsRepository),
+            new PingCommand()
         ];
     }
 }
